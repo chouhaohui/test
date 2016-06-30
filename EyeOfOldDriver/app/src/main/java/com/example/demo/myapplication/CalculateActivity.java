@@ -1,29 +1,32 @@
 package com.example.demo.myapplication;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 
-/**
- * Created by HeWenjie on 2016/5/11.
- */
-public class FormulaActivity extends Activity implements View.OnClickListener {
+import java.io.File;
 
-    private CameraView cameraSurfaceView;
-    private ImageView takePictureView;
+/**
+ * Created by HeWenjie on 2016/6/28.
+ */
+public class CalculateActivity extends Activity {
+
+    private ImageView testImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.formula_activity);
+        setContentView(R.layout.calculate_activity);
 
         findView();
         bindButton();
+
+        show();
     }
 
     @Override
@@ -49,29 +52,22 @@ public class FormulaActivity extends Activity implements View.OnClickListener {
     }
 
     private void findView() {
-        cameraSurfaceView = (CameraView)findViewById(R.id.cameraSurfaceView);
-        takePictureView = (ImageView)findViewById(R.id.takePicture);
+        testImage = (ImageView)findViewById(R.id.testImage);
     }
 
     private void bindButton() {
-        takePictureView.setOnClickListener(this);
+
     }
 
-    public void onClick(View v) {
-        switch(v.getId()) {
-            case R.id.takePicture:
-                cameraSurfaceView.takePicture();
-                try {
-                    Thread.currentThread().sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Intent intent = new Intent();
-                intent.setClass(FormulaActivity.this, CalculateActivity.class);
-                startActivity(intent);
-                this.finish();
-                break;
+    private void show() {
+        String path = Environment.getExternalStorageDirectory() + "/formula.jpg";
+        File mFile = new File(path);
+
+        if(mFile.exists()) {
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            BitmapProcessing bitmapProcessing = new BitmapProcessing();
+            Bitmap result = bitmapProcessing.getScanArea(bitmap);
+            testImage.setImageBitmap(result);
         }
     }
-
 }

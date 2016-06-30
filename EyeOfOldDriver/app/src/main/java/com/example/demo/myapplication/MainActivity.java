@@ -57,7 +57,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 Intent intent = new Intent();
                 intent.setClass(MainActivity.this, FormulaActivity.class);
                 startActivity(intent);
-                //this.finish();
+                this.finish();
                 break;
         }
     }
