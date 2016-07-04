@@ -28,6 +28,10 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:screenOrientation="sensor">
         </activity>
+        <activity
+            android:name=".CalculateActivity"
+            android:label="@string/calculate">
+        </activity>
     </application>
 
 </manifest>

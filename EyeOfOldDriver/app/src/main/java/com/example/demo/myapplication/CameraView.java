@@ -9,6 +9,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.FileOutputStream;
+import java.util.List;
 
 /**
  * Created by HeWenjie on 2016/5/11.
@@ -70,7 +71,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, a
 
     public void onPictureTaken(byte[] data, Camera camera) { // 拍摄完成后保存照片
         try {
-            String path = Environment.getExternalStorageDirectory() + "/formula.jpg";
+            String path = Environment.getExternalStorageDirectory() + "/formula.png";
             data2file(data, path);
         } catch(Exception e) {
             e.printStackTrace();

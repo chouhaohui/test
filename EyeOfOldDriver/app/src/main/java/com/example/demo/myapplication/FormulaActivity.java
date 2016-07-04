@@ -1,6 +1,7 @@
 package com.example.demo.myapplication;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,7 +12,7 @@ import android.widget.ImageView;
 /**
  * Created by HeWenjie on 2016/5/11.
  */
-public class FormulaActivity extends Activity {
+public class FormulaActivity extends Activity implements View.OnClickListener {
 
     private CameraView cameraSurfaceView;
     private ImageView takePictureView;
@@ -53,11 +54,24 @@ public class FormulaActivity extends Activity {
     }
 
     private void bindButton() {
-        takePictureView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cameraSurfaceView.takePicture();
-            }
-        });
+        takePictureView.setOnClickListener(this);
     }
+
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.takePicture:
+                cameraSurfaceView.takePicture();
+                try {
+                    Thread.currentThread().sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Intent intent = new Intent();
+                intent.setClass(FormulaActivity.this, CalculateActivity.class);
+                startActivity(intent);
+                this.finish();
+                break;
+        }
+    }
+
 }
