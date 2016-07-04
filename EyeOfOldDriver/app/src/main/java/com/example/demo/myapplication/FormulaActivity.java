@@ -62,7 +62,7 @@ public class FormulaActivity extends Activity implements View.OnClickListener {
             case R.id.takePicture:
                 cameraSurfaceView.takePicture();
                 try {
-                    Thread.currentThread().sleep(100);
+                    Thread.currentThread().sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

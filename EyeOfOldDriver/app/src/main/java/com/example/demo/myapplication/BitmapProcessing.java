@@ -20,9 +20,9 @@ public class BitmapProcessing {
         int widthOrg = bitmap.getWidth();
         int heightOrg = bitmap.getHeight();
 
-        int xTopLeft = 50;
-        int yTopLeft = 130;
-        int width = widthOrg - 2 * xTopLeft;
+        int xTopLeft = 70;
+        int yTopLeft = 100;
+        int width = 350;
         int height = 50;
 
         try {
