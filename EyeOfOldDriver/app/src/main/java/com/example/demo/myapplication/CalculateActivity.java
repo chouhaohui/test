@@ -1,12 +1,10 @@
 package com.example.demo.myapplication;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.telephony.IccOpenLogicalChannelResponse;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -82,37 +80,12 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     }
 
     private void show() {
-        String path = Environment.getExternalStorageDirectory() + "/formula.png";
+        String path = Environment.getExternalStorageDirectory() + "/result.png";
         File mFile = new File(path);
 
         if(mFile.exists()) {
             Bitmap bitmap = BitmapFactory.decodeFile(path);
-            BitmapProcessing bitmapProcessing = new BitmapProcessing();
-            Bitmap result = bitmapProcessing.getScanArea(bitmap);
-            testImage.setImageBitmap(result);
-            saveMyBitmap(result);
-        }
-    }
-
-    private void saveMyBitmap(Bitmap bitmap) {
-        String path = Environment.getExternalStorageDirectory() + "/result.png";
-        File f = new File(path);
-        FileOutputStream fOut = null;
-        try {
-            fOut = new FileOutputStream(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
-        try {
-            fOut.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            fOut.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            testImage.setImageBitmap(bitmap);
         }
     }
 }
