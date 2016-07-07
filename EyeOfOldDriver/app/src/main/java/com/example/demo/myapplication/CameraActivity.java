@@ -1,16 +1,10 @@
 package com.example.demo.myapplication;
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
-import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +18,7 @@ import android.widget.LinearLayout;
 /**
  * Created by HeWenjie on 2016/5/11.
  */
-public class FormulaActivity extends Activity implements View.OnClickListener {
+public class CameraActivity extends Activity implements View.OnClickListener {
 
     private CameraView cameraSurfaceView;
     private ImageView takePictureView;
@@ -36,7 +30,7 @@ public class FormulaActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.formula_activity);
 
         findView();
-        setLayout();
+        setLayout(this.getIntent().getExtras());
         bindButton();
     }
 
@@ -68,35 +62,37 @@ public class FormulaActivity extends Activity implements View.OnClickListener {
         rectangleLayout = (LinearLayout)findViewById(R.id.rectangleLayout);
     }
 
-    private void setLayout() {
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) { // 当屏幕是竖屏的时候
-            GradientDrawable drawable = new GradientDrawable();
-            // 获取当前窗口长和宽
-            WindowManager windowManager = this.getWindowManager();
-            int width = windowManager.getDefaultDisplay().getWidth();
-            int height = windowManager.getDefaultDisplay().getHeight();
+    private void setLayout(Bundle bundle) {
+        GradientDrawable drawable = new GradientDrawable();
+        // 获取当前窗口长和宽
+        WindowManager windowManager = this.getWindowManager();
+        int width = windowManager.getDefaultDisplay().getWidth();
 
-            // 重新设置Camera窗口的大小（不然效果有一点变形）
-            int cameraWidth = width;
-            int cameraHeight = (int)(((double)width / 480) * 640);
-            ViewGroup.LayoutParams layoutParams = cameraSurfaceView.getLayoutParams();
-            layoutParams.height = cameraHeight;
-            cameraSurfaceView.setLayoutParams(layoutParams);
+        // 重新设置Camera窗口的大小（不然效果有一点变形）
+        int cameraWidth = width;
+        int cameraHeight = (int)(((double)width / 480) * 640);
+        ViewGroup.LayoutParams layoutParams = cameraSurfaceView.getLayoutParams();
+        layoutParams.height = cameraHeight;
+        cameraSurfaceView.setLayoutParams(layoutParams);
 
+        if(bundle.getString("MODE").equals("formula")) { // 当前界面是四则运算界面
+            //if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) { // 当屏幕是竖屏的时候
             int rectangleWidth = (int)(0.8 * cameraWidth);
             int rectangleHeight = (int)(0.1 * cameraHeight);
             drawable.setSize(rectangleWidth, rectangleHeight);
-            drawable.setStroke(10, Color.parseColor("#000000"));
-            rectangleLayout.setBackground(drawable);
-
-            // N.LayoutParams中的N是要调整的控件的父类
-            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams)rectangleLayout.getLayoutParams();
-            lp.setMargins(0, (int)(0.2 * cameraHeight), 0, 0);
-
-
-        } else { // 当屏幕是横屏的时候
-
+            //}
+        } else if (bundle.getString("MODE").equals("sudoku")) {
+            int rectangleWidth = (int)(0.8 * cameraWidth);
+            int rectangleHeight = rectangleWidth;
+            drawable.setSize(rectangleWidth, rectangleHeight);
         }
+        drawable.setStroke(10, Color.parseColor("#FF0000"));
+        rectangleLayout.setBackground(drawable);
+
+        // N.LayoutParams中的N是要调整的控件的父类
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams)rectangleLayout.getLayoutParams();
+        lp.setMargins(0, (int) (0.1 * cameraHeight), 0, 0);
+
     }
 
     private void bindButton() {
@@ -106,7 +102,7 @@ public class FormulaActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.takePicture:
-                cameraSurfaceView.takePicture();
+                cameraSurfaceView.takePicture(this.getIntent().getExtras().getString("MODE"));
                 // 延时0.2s来保存图片
                 try {
                     Thread.currentThread().sleep(200);
@@ -114,7 +110,7 @@ public class FormulaActivity extends Activity implements View.OnClickListener {
                     e.printStackTrace();
                 }
                 Intent intent = new Intent();
-                intent.setClass(FormulaActivity.this, CalculateActivity.class);
+                intent.setClass(CameraActivity.this, CalculateActivity.class);
                 startActivity(intent);
                 this.finish();
                 break;

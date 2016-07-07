@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.demo.myapplication" >
+    package="com.example.demo.myapplication">
 
     <uses-permission android:name="android.permission.CAMERA"></uses-permission>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,14 +24,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FormulaActivity"
+            android:name=".CameraActivity"
             android:label="@string/formula"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:screenOrientation="sensor">
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".CalculateActivity"
-            android:label="@string/calculate">
+            android:label="@string/calculate"
+            android:theme="@android:style/Theme.NoTitleBar">
         </activity>
     </application>
 

@@ -23,6 +23,7 @@ import java.util.List;
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback, android.hardware.Camera.PictureCallback {
     private SurfaceHolder holder;
     private Camera camera;
+    private String mode;
 
     public CameraView(Context context, AttributeSet attrs) { // 构造函数
         super(context, attrs);
@@ -73,6 +74,11 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, a
 
     public void takePicture() {
         camera.takePicture(null, null, this);
+    }
+
+    public void takePicture(String mode) {
+        takePicture();
+        this.mode = mode;
     }
 
     public void onPictureTaken(byte[] data, Camera camera) { // 拍摄完成后保存照片
@@ -131,13 +137,15 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, a
         int bmpHeight = bitmap.getHeight();
 
         int xTopLeft = (int)(0.1 * bmpWidth);
-        int yTopLeft = (int)(0.2 * bmpHeight);
+        int yTopLeft = (int)(0.1 * bmpHeight);
 
         int width = (int)(0.8 * bmpWidth);
-        int height = (int)(0.1 * bmpHeight);
-
-        String s = String.valueOf(bmpWidth) + " " + String.valueOf(bmpHeight) + " " + String.valueOf(xTopLeft) + " " + String.valueOf(yTopLeft) + " " + String.valueOf(width) + " " + String.valueOf(height);
-        System.out.println(s);
+        int height = 0;
+        if(mode.equals("formula")) {
+            height = (int)(0.1 * bmpHeight);
+        } else if (mode.equals("sudoku")) {
+            height = width;
+        }
 
         try {
             result = Bitmap.createBitmap(bitmap, xTopLeft, yTopLeft, width, height);
