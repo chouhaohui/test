@@ -12,6 +12,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by HeWenjie on 2016/7/7.
@@ -52,7 +53,6 @@ public class BitmapProcess {
     // 获取轮廓的外接矩形
     public ArrayList<Bitmap> mBoundRect(Bitmap bitmap) {
         ArrayList<MatOfPoint> contours = mFindContours(bitmap);
-
         ArrayList<Bitmap> boundrects = new ArrayList<>();
 
         // 二值化
@@ -62,55 +62,54 @@ public class BitmapProcess {
         Utils.bitmapToMat(bitmap, mat);
 
         int minWidth = 0x4f4f4f;
+        ArrayList<Rect> rectList = new ArrayList<>();
         for(int i = 0; i < contours.size(); i++) {
             Rect rect = Imgproc.boundingRect(contours.get(i));
+            rectList.add(rect);
             if(rect.width < minWidth) minWidth = rect.width;
+            /*
+            Bitmap result = Bitmap.createBitmap(bitmap, (int)rect.tl().x, (int)rect.tl().y,
+                    (int)(rect.br().x - rect.tl().x), (int)(rect.br().y - rect.tl().y));
+            boundrects.add(result);
+            */
+        }
+
+        // 调整顺序
+        rectList = adjustment(rectList);
+
+        for(int i = 0; i < rectList.size(); i++) {
+            Rect rect = rectList.get(i);
             Bitmap result = Bitmap.createBitmap(bitmap, (int)rect.tl().x, (int)rect.tl().y,
                     (int)(rect.br().x - rect.tl().x), (int)(rect.br().y - rect.tl().y));
             boundrects.add(result);
         }
-
         // 切割处理，将被分在同一块的字符切割
         //boundrects = bitmapSplit(boundrects, minWidth);
         return boundrects;
     }
 
-    // Rect后期处理，由于数字太拥挤可能导致轮廓识别将若干个字符并在一起
-    // 但是这种算法只能处理等宽字体
-    private ArrayList<Bitmap> bitmapSplit(ArrayList<Bitmap> boundrects, int minWidth) {
-        ArrayList<Bitmap> bitmapArrayList = new ArrayList<>();
-        System.out.println(boundrects.size());
-        for(int i = 0; i < boundrects.size(); i++) {
-            Bitmap bitmap = boundrects.get(i);
-            System.out.println(bitmap.getWidth());
-            int portion = 1;
-            if((float)bitmap.getWidth() / minWidth - bitmap.getWidth() / minWidth > 0.5) {
-                portion = bitmap.getWidth() / minWidth + 1;
-            } else {
-                portion = bitmap.getWidth() / minWidth;
-            }
-
-            if(portion == 1) {
-                bitmapArrayList.add(bitmap);
-                continue;
-            }
-
-            int eachWidth = bitmap.getWidth() / portion;
-            System.out.println(portion);
-
-            // 先处理前面的
-            for(int j = 0; j < portion - 1; j++) {
-                Bitmap bitmap1 = Bitmap.createBitmap(bitmap, j * eachWidth,
-                        0, (j + 1) * eachWidth, bitmap.getHeight());
-                bitmapArrayList.add(bitmap1);
-            }
-            // 单独处理最后一个
-            Bitmap bitmap1 = Bitmap.createBitmap(bitmap, (portion - 1) * eachWidth,
-                    0, bitmap.getWidth() - (portion - 1) * eachWidth, bitmap.getHeight());
-            bitmapArrayList.add(bitmap1);
-
+    private ArrayList<Rect> adjustment(ArrayList<Rect> rectList) {
+        ArrayList<Rect> rectArrayList = new ArrayList<>();
+        int length = rectList.size();
+        for(int i = 0; i < length; i++) {
+            int index = getMinIndex(rectList);
+            rectArrayList.add(rectList.get(index));
+            rectList.remove(index);
         }
-        return bitmapArrayList;
+
+        return rectArrayList;
+    }
+
+    private int getMinIndex(ArrayList<Rect> rectList) {
+        int index = 0;
+        int min = 0x4f4f4f;
+        for(int i = 0; i < rectList.size(); i++) {
+            if(min > rectList.get(i).x) {
+                index = i;
+                min = rectList.get(i).x;
+            }
+        }
+        return index;
     }
 
     // 二值化

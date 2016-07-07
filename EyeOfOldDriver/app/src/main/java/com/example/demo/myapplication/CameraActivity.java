@@ -78,7 +78,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         if(bundle.getString("MODE").equals("formula")) { // 当前界面是四则运算界面
             //if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) { // 当屏幕是竖屏的时候
             int rectangleWidth = (int)(0.8 * cameraWidth);
-            int rectangleHeight = (int)(0.1 * cameraHeight);
+            int rectangleHeight = (int)(0.15 * cameraHeight);
             drawable.setSize(rectangleWidth, rectangleHeight);
             //}
         } else if (bundle.getString("MODE").equals("sudoku")) {

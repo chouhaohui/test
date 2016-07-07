@@ -67,6 +67,5 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
         intent.putExtras(bundle);
         startActivity(intent);
-        this.finish();
     }
 }
