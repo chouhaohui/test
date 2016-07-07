@@ -1,28 +1,58 @@
 package com.example.demo.myapplication;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by HeWenjie on 2016/6/28.
  */
 public class CalculateActivity extends Activity implements View.OnClickListener {
 
+    private String TAG = "CalculateActivity";
+
     private ImageView testImage;
     private Button ackButton;
+
+    private Mat mat;
+
+    private ArrayList<Bitmap> boundrects;
+    private int integer = 0;
+
+    private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    Log.i(TAG, "OpenCV loaded successfully");
+                    show();
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +61,19 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
 
         findView();
         bindButton();
+    }
 
-        show();
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        if (!OpenCVLoader.initDebug()) {
+            Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+        } else {
+            Log.d(TAG, "OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
     }
 
     @Override
@@ -69,12 +110,10 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.ackButton:
-                /*
-                Intent intent = new Intent();
-                intent.setClass(CalculateActivity.this, MainActivity.class);
-                startActivity(intent);
-                */
-                this.finish();
+                if(integer < boundrects.size()) {
+                    testImage.setImageBitmap(boundrects.get(integer));
+                }
+                integer++;
                 break;
         }
     }
@@ -85,7 +124,9 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
 
         if(mFile.exists()) {
             Bitmap bitmap = BitmapFactory.decodeFile(path);
-            testImage.setImageBitmap(bitmap);
+
+            BitmapProcess bitmapProcess = new BitmapProcess();
+            boundrects = bitmapProcess.mBoundRect(bitmap);
         }
     }
 }
