@@ -5,6 +5,7 @@
 
     <string name="formula">四则运算</string>
     <string name="su_do_ku">数独</string>
+    <string name="retry_button">式子不正确？</string>
     <string name="ack_button">确认</string>
     <string name="calculate">计算</string>
 </resources>

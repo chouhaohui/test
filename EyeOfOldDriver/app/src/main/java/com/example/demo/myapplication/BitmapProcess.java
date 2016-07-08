@@ -1,7 +1,10 @@
 package com.example.demo.myapplication;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.hardware.Camera;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -67,11 +70,6 @@ public class BitmapProcess {
             Rect rect = Imgproc.boundingRect(contours.get(i));
             rectList.add(rect);
             if(rect.width < minWidth) minWidth = rect.width;
-            /*
-            Bitmap result = Bitmap.createBitmap(bitmap, (int)rect.tl().x, (int)rect.tl().y,
-                    (int)(rect.br().x - rect.tl().x), (int)(rect.br().y - rect.tl().y));
-            boundrects.add(result);
-            */
         }
 
         // 调整顺序
@@ -88,6 +86,7 @@ public class BitmapProcess {
         return boundrects;
     }
 
+    // 调整切割字符顺序的函数
     private ArrayList<Rect> adjustment(ArrayList<Rect> rectList) {
         ArrayList<Rect> rectArrayList = new ArrayList<>();
         int length = rectList.size();
@@ -206,4 +205,64 @@ public class BitmapProcess {
         return temp;
     }
 
+    // 将bitmap转换成32*32的Bitmap
+    public Bitmap bitmap2SquareBitmap(Bitmap bitmap) {
+        // 腐蚀处理
+        Mat mat = new Mat();
+        Utils.bitmapToMat(bitmap, mat);
+        Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 2));
+        Imgproc.erode(mat, mat, erodeElement);
+        Utils.matToBitmap(mat, bitmap);
+
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        // 选取长宽较大的数值作为新的边长
+        int sideLength = width > height ? width : height;
+
+        // 初始化newBitmap的颜色
+        int []colors = new int[sideLength * sideLength];
+        for(int i = 0; i < sideLength * sideLength; i++) {
+            colors[i] = Color.rgb(255, 255, 255);
+        }
+        // 创建新的bitmap
+        Bitmap newBitmap = Bitmap.createBitmap(colors, sideLength, sideLength, bitmap.getConfig()).copy(bitmap.getConfig(), true);
+        Canvas canvas = new Canvas(newBitmap);
+        // 将图片居中
+        int x_shift = (sideLength - width) / 2;
+        int y_shift = (sideLength - height) / 2;
+
+        canvas.drawBitmap(bitmap, x_shift, y_shift, null);
+
+        return newBitmap;
+    }
+
+    // 将Bitmap转成32*32矩阵
+    public int[] bitmap2Matrix(Bitmap bitmap) {
+        // 先将Bitmap转换成32*32的bitmap
+        bitmap = zoom(bitmap);
+
+        int []matrix = new int[1024];
+
+        for(int j = 0; j < bitmap.getHeight(); j++) {
+            for(int i = 0; i < bitmap.getWidth(); i++) {
+                if(bitmap.getPixel(i, j) == -1) {
+                    matrix[j * bitmap.getWidth() + i] = 0; // 像素点是白色，矩阵点为0
+                } else {
+                    matrix[j * bitmap.getWidth() + i] = 1; // 像素点是黑色，矩阵点为1
+                }
+            }
+        }
+        return matrix;
+    }
+
+    // Bitmap缩放到32*32Bitmap
+    private Bitmap zoom(Bitmap bitmap) {
+        Mat mat = new Mat();
+        Utils.bitmapToMat(bitmap, mat);
+        Imgproc.resize(mat, mat, new Size(32, 32));
+        Bitmap resizeBitmap = Bitmap.createBitmap(32, 32, bitmap.getConfig());
+        Utils.matToBitmap(mat, resizeBitmap);
+        return resizeBitmap;
+    }
 }

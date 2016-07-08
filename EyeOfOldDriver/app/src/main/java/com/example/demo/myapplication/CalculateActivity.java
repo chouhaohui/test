@@ -31,6 +31,7 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
 
     private ImageView testImage;
     private Button ackButton;
+    private Button retryButton;
 
     private Mat mat;
 
@@ -44,7 +45,7 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
                 case LoaderCallbackInterface.SUCCESS:
                 {
                     Log.i(TAG, "OpenCV loaded successfully");
-                    show();
+                    bitmapSplit();
                 } break;
                 default:
                 {
@@ -101,24 +102,37 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     private void findView() {
         testImage = (ImageView)findViewById(R.id.testImage);
         ackButton = (Button)findViewById(R.id.ackButton);
+        retryButton = (Button)findViewById(R.id.retryButton);
     }
 
     private void bindButton() {
         ackButton.setOnClickListener(this);
+        retryButton.setOnClickListener(this);
     }
 
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.ackButton:
                 if(integer < boundrects.size()) {
-                    testImage.setImageBitmap(boundrects.get(integer));
+                    BitmapProcess bitmapProcess = new BitmapProcess();
+                    Bitmap bitmap = bitmapProcess.bitmap2SquareBitmap(boundrects.get(integer));
+                    bitmapProcess.bitmap2Matrix(bitmap);
+                    testImage.setImageBitmap(bitmap);
                 }
                 integer++;
                 break;
+            case R.id.retryButton:
+                Intent intent = new Intent();
+                intent.setClass(CalculateActivity.this, CameraActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("MODE", this.getIntent().getExtras().getString("MODE"));
+                intent.putExtras(bundle);
+                startActivity(intent);
+                this.finish();
         }
     }
 
-    private void show() {
+    private void bitmapSplit() {
         String path = Environment.getExternalStorageDirectory() + "/result.png";
         File mFile = new File(path);
 
