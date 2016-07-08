@@ -1,7 +1,9 @@
 package com.example.demo.myapplication;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -12,15 +14,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.w3c.dom.Text;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by HeWenjie on 2016/6/28.
@@ -32,25 +40,25 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     private ImageView testImage;
     private Button ackButton;
     private Button retryButton;
-
-    private Mat mat;
+    private TextView formula;
 
     private ArrayList<Bitmap> boundrects;
-    private int integer = 0;
 
-    private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
+    private Data data;
+
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
+                case LoaderCallbackInterface.SUCCESS: {
                     Log.i(TAG, "OpenCV loaded successfully");
                     bitmapSplit();
-                } break;
-                default:
-                {
+                }
+                break;
+                default: {
                     super.onManagerConnected(status);
-                } break;
+                }
+                break;
             }
         }
     };
@@ -60,13 +68,13 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calculate_activity);
 
+        data = (Data)getApplication();
         findView();
         bindButton();
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         if (!OpenCVLoader.initDebug()) {
             Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
@@ -100,9 +108,10 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     }
 
     private void findView() {
-        testImage = (ImageView)findViewById(R.id.testImage);
-        ackButton = (Button)findViewById(R.id.ackButton);
-        retryButton = (Button)findViewById(R.id.retryButton);
+        testImage = (ImageView) findViewById(R.id.testImage);
+        ackButton = (Button) findViewById(R.id.ackButton);
+        retryButton = (Button) findViewById(R.id.retryButton);
+        formula = (TextView)findViewById(R.id.formula);
     }
 
     private void bindButton() {
@@ -111,15 +120,9 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     }
 
     public void onClick(View v) {
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.ackButton:
-                if(integer < boundrects.size()) {
-                    BitmapProcess bitmapProcess = new BitmapProcess();
-                    Bitmap bitmap = bitmapProcess.bitmap2SquareBitmap(boundrects.get(integer));
-                    bitmapProcess.bitmap2Matrix(bitmap);
-                    testImage.setImageBitmap(bitmap);
-                }
-                integer++;
+
                 break;
             case R.id.retryButton:
                 Intent intent = new Intent();
@@ -129,6 +132,7 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
                 intent.putExtras(bundle);
                 startActivity(intent);
                 this.finish();
+                break;
         }
     }
 
@@ -136,11 +140,22 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
         String path = Environment.getExternalStorageDirectory() + "/result.png";
         File mFile = new File(path);
 
-        if(mFile.exists()) {
+        if (mFile.exists()) {
             Bitmap bitmap = BitmapFactory.decodeFile(path);
 
             BitmapProcess bitmapProcess = new BitmapProcess();
             boundrects = bitmapProcess.mBoundRect(bitmap);
+            ArrayList<Vector> arrayList = bitmapProcess.allBitmap2Matrix(boundrects);
+            recognition(arrayList);
         }
+    }
+
+    // 识别
+    public void recognition(ArrayList<Vector> arrayList) {
+        String formulaText = "";
+        for(int i = 0; i < arrayList.size(); i++) {
+            formulaText += data.predict(arrayList.get(i));
+        }
+        formula.setText(formulaText);
     }
 }

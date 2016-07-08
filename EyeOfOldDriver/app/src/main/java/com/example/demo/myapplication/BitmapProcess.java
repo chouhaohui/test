@@ -16,6 +16,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Vector;
 
 /**
  * Created by HeWenjie on 2016/7/7.
@@ -152,6 +153,7 @@ public class BitmapProcess {
                 }
             }
         }
+        if(front == 0 || back == 0) return img;
         int frontvalue = (int) (grayfrontmean / front);// 前景中心
         int backvalue = (int) (graybackmean / back);// 背景中心
         float G[] = new float[frontvalue - backvalue + 1];// 方差数组
@@ -205,6 +207,16 @@ public class BitmapProcess {
         return temp;
     }
 
+    public ArrayList<Vector> allBitmap2Matrix(ArrayList<Bitmap> boundrects) {
+        ArrayList<Vector> arrayList = new ArrayList<>();
+        for(int i = 0; i < boundrects.size(); i++) {
+            Bitmap bitmap = bitmap2SquareBitmap(boundrects.get(i));
+            Vector matrix = bitmap2Matrix(bitmap);
+            arrayList.add(matrix);
+        }
+        return arrayList;
+    }
+
     // 将bitmap转换成32*32的Bitmap
     public Bitmap bitmap2SquareBitmap(Bitmap bitmap) {
         // 腐蚀处理
@@ -238,18 +250,18 @@ public class BitmapProcess {
     }
 
     // 将Bitmap转成32*32矩阵
-    public int[] bitmap2Matrix(Bitmap bitmap) {
+    public Vector bitmap2Matrix(Bitmap bitmap) {
         // 先将Bitmap转换成32*32的bitmap
         bitmap = zoom(bitmap);
 
-        int []matrix = new int[1024];
+        Vector matrix = new Vector();
 
         for(int j = 0; j < bitmap.getHeight(); j++) {
             for(int i = 0; i < bitmap.getWidth(); i++) {
                 if(bitmap.getPixel(i, j) == -1) {
-                    matrix[j * bitmap.getWidth() + i] = 0; // 像素点是白色，矩阵点为0
+                    matrix.add('0'); // 像素点是白色，矩阵点为0
                 } else {
-                    matrix[j * bitmap.getWidth() + i] = 1; // 像素点是黑色，矩阵点为1
+                    matrix.add('1'); // 像素点是黑色，矩阵点为1
                 }
             }
         }
