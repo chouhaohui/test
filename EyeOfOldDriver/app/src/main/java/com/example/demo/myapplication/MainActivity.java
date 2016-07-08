@@ -11,6 +11,7 @@ import android.widget.Button;
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private Button formulaButton;
+    private Button sudokuButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,20 +46,27 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void findView() {
         formulaButton = (Button)findViewById(R.id.formulaButton);
+        sudokuButton = (Button)findViewById(R.id.sudokuButton);
     }
 
     private void bindButton() {
         formulaButton.setOnClickListener(this);
+        sudokuButton.setOnClickListener(this);
     }
 
     public void onClick(View v) {
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, CameraActivity.class);
+        Bundle bundle = new Bundle();
         switch(v.getId()) {
             case R.id.formulaButton:
-                Intent intent = new Intent();
-                intent.setClass(MainActivity.this, FormulaActivity.class);
-                startActivity(intent);
-                //this.finish();
+                bundle.putString("MODE", "formula");
                 break;
+            case R.id.sudokuButton:
+                bundle.putString("MODE", "sudoku");
         }
+        intent.putExtras(bundle);
+        startActivity(intent);
+        this.finish();
     }
 }
