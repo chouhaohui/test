@@ -212,6 +212,17 @@ public class BitmapProcess {
         for(int i = 0; i < boundrects.size(); i++) {
             Bitmap bitmap = bitmap2SquareBitmap(boundrects.get(i));
             Vector matrix = bitmap2Matrix(bitmap);
+
+            System.out.println("---------");
+            for(int a = 0; a < 32; a ++) {
+                String s = "";
+                for(int b = 0; b < 32; b++) {
+                    s += matrix.get(a * 32 + b);
+                }
+                System.out.println(s);
+            }
+            System.out.println("---------");
+
             arrayList.add(matrix);
         }
         return arrayList;
@@ -255,7 +266,6 @@ public class BitmapProcess {
         bitmap = zoom(bitmap);
 
         Vector matrix = new Vector();
-
         for(int j = 0; j < bitmap.getHeight(); j++) {
             for(int i = 0; i < bitmap.getWidth(); i++) {
                 if(bitmap.getPixel(i, j) == -1) {

@@ -8,7 +8,7 @@ public class KNN {
     private char all_chars[]  = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '*', '/', '/', '(', ')'};
     private Vector<Vector> dataset;                       // 储存训练集
     private Vector<Integer> class_names;                  // 储存训练集对应的label
-    private int k = 1;                                    // 算法参数
+    private int k = 3;                                    // 算法参数
 
 	public KNN() {}
 
