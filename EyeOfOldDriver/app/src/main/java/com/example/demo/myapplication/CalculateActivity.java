@@ -41,10 +41,12 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     private Button ackButton;
     private Button retryButton;
     private TextView formula;
+    private TextView answerText;
 
     private ArrayList<Bitmap> boundrects;
 
     private Data data;
+    private String expression;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -112,6 +114,7 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
         ackButton = (Button) findViewById(R.id.ackButton);
         retryButton = (Button) findViewById(R.id.retryButton);
         formula = (TextView)findViewById(R.id.formula);
+        answerText = (TextView)findViewById(R.id.answerText);
     }
 
     private void bindButton() {
@@ -122,7 +125,13 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ackButton:
-
+                Calculator calculator = new Calculator();
+                String answer = calculator.run(expression);
+                if (answer == null) {
+                    answerText.setText("运算表达式有误，请重新扫描");
+                } else {
+                    answerText.setText(String.valueOf(answer));
+                }
                 break;
             case R.id.retryButton:
                 Intent intent = new Intent();
@@ -157,5 +166,10 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
             formulaText += data.predict(arrayList.get(i));
         }
         formula.setText(formulaText);
+
+        if(!formulaText.endsWith("=")) {
+            formulaText += "=";
+        }
+        expression = formulaText;
     }
 }

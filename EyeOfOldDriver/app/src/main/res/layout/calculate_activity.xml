@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="100px"
+        android:textSize="70px"
         />
 
     <Button
@@ -29,5 +29,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/ack_button"/>
+
+    <TextView
+        android:id="@+id/answerText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="50px"
+        />
 
 </LinearLayout>
