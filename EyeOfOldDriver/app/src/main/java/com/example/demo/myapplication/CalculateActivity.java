@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,8 +30,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import rb.popview.PopField;
-
 /**
  * Created by HeWenjie on 2016/6/28.
  */
@@ -40,6 +37,7 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
 
     private String TAG = "CalculateActivity";
 
+    private ImageView testImage;
     private Button ackButton;
     private Button retryButton;
     private TextView formula;
@@ -48,8 +46,7 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     private ArrayList<Bitmap> boundrects;
 
     private Data data;
-
-    private PopField mPopField;
+    private String expression;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -113,11 +110,11 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     }
 
     private void findView() {
+        testImage = (ImageView) findViewById(R.id.testImage);
         ackButton = (Button) findViewById(R.id.ackButton);
         retryButton = (Button) findViewById(R.id.retryButton);
         formula = (TextView)findViewById(R.id.formula);
         answerText = (TextView)findViewById(R.id.answerText);
-        mPopField = PopField.attach2Window(this);
     }
 
     private void bindButton() {
@@ -128,7 +125,13 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ackButton:
-                mPopField.popView(formula);
+                Calculator calculator = new Calculator();
+                String answer = calculator.run(expression);
+                if (answer == null) {
+                    answerText.setText("运算表达式有误，请重新扫描");
+                } else {
+                    answerText.setText(String.valueOf(answer));
+                }
                 break;
             case R.id.retryButton:
                 Intent intent = new Intent();
@@ -167,12 +170,6 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
         if(!formulaText.endsWith("=")) {
             formulaText += "=";
         }
-        Calculator calculator = new Calculator();
-        String answer = calculator.run(formulaText);
-        if (answer == null) {
-            answerText.setText("运算表达式有误，请重新扫描");
-        } else {
-            answerText.setText(answer);
-        }
+        expression = formulaText;
     }
 }
