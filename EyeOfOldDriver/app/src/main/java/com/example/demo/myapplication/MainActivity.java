@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,11 +14,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
+import rb.popview.PopField;
+
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private Button formulaButton;
     private Button sudokuButton;
     private Data data;
+
+    private PopField mPopField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +66,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void bindButton() {
         formulaButton.setOnClickListener(this);
         sudokuButton.setOnClickListener(this);
+        mPopField = PopField.attach2Window(this);
     }
 
     public void onClick(View v) {
-        Intent intent = new Intent();
+        mPopField.popView(findViewById(v.getId()));
+        final Intent intent = new Intent();
         intent.setClass(MainActivity.this, CameraActivity.class);
         Bundle bundle = new Bundle();
         switch(v.getId()) {
@@ -75,7 +82,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 bundle.putString("MODE", "sudoku");
         }
         intent.putExtras(bundle);
-        startActivity(intent);
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                MainActivity.this.startActivity(intent);
+                MainActivity.this.finish();
+            }
+        }, 500);
     }
 
     // 提前加载KNN
