@@ -12,8 +12,11 @@ public class Main {
         if (expression.endsWith("=")) {
             expression = expression.substring(0, expression.length() - 1);
         }
-        String[] ss = expression.split("\\+|-|\\*|/");
+        String[] ss = expression.split("\\+|-|\\*|/|\\(|\\)");
         for (String s:ss) {
+            if (s.equals("")) {
+                continue;
+            }
             if (!isNumeric(s)) {
                 return false;
             }
@@ -147,28 +150,33 @@ public class Main {
         throw new InputMismatchException("Error! Please enter another expression");
     }
 
+    private static void process_cal(String expression){
+        try {
+            expression = expression.replaceAll(" ", "");
+            String style = "0.####";
+            DecimalFormat df = new DecimalFormat();
+            df.applyPattern(style);
+            if (expression.startsWith("+") || expression.startsWith("-")) {
+                expression = "0" + expression;
+            }
+            if (validateExpression(expression)) {
+                double ans = calculate(mid_to_post(expression));
+                System.out.println("The answer is : " + df.format(ans));
+            } else {
+                System.out.println("Invalid input!");
+            }
+        } catch (InputMismatchException s) {
+            System.out.println("Oooops! Exception thrown : " + s);
+        }
+    }
+
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         System.out.println("Please input an expression such as (3+4)*5=\n");
         String expression;
         while (true) {
-            expression = in.next();
-            try {
-                String style = "0.####";
-                DecimalFormat df = new DecimalFormat();
-                df.applyPattern(style);
-                if (expression.startsWith("+") || expression.startsWith("-")) {
-                    expression = "0" + expression;
-                }
-                if (validateExpression(expression)) {
-                    double ans = calculate(mid_to_post(expression));
-                    System.out.println("The answer is : " + df.format(ans));
-                } else {
-                    System.out.println("Invalid input!");
-                }
-            } catch (InputMismatchException s) {
-                System.out.println("Oooops! Exception thrown : " + s);
-            }
+            expression = in.nextLine();
+            process_cal(expression);
         }
 
     }
