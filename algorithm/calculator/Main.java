@@ -1,4 +1,3 @@
-//import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -13,9 +12,15 @@ public class Main {
         if (expression.endsWith("=")) {
             expression = expression.substring(0, expression.length() - 1);
         }
+        String[] ss = expression.split("\\+|-|\\*|/");
+        for (String s:ss) {
+            if (!isNumeric(s)) {
+                return false;
+            }
+        }
         // 去掉算式中所有的合法项替换为"?"字符
         expression = expression.replaceAll(
-                "\\d", "?");
+                "\\d|\\.", "?");
         // 去掉替换后算式中所有的空格
         expression = expression.replaceAll(" ", "");
         // 如果有两个相邻的项中间没有操作符，则算式不合法
