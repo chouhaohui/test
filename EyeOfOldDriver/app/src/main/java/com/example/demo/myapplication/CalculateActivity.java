@@ -1,40 +1,90 @@
 package com.example.demo.myapplication;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.telephony.IccOpenLogicalChannelResponse;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.w3c.dom.Text;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by HeWenjie on 2016/6/28.
  */
 public class CalculateActivity extends Activity implements View.OnClickListener {
 
+    private String TAG = "CalculateActivity";
+
     private ImageView testImage;
     private Button ackButton;
+    private Button retryButton;
+    private TextView formula;
+    private TextView answerText;
+
+    private ArrayList<Bitmap> boundrects;
+
+    private Data data;
+    private String expression;
+
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS: {
+                    Log.i(TAG, "OpenCV loaded successfully");
+                    bitmapSplit();
+                }
+                break;
+                default: {
+                    super.onManagerConnected(status);
+                }
+                break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calculate_activity);
 
+        data = (Data)getApplication();
         findView();
         bindButton();
+    }
 
-        show();
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!OpenCVLoader.initDebug()) {
+            Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+        } else {
+            Log.d(TAG, "OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
     }
 
     @Override
@@ -60,59 +110,66 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     }
 
     private void findView() {
-        testImage = (ImageView)findViewById(R.id.testImage);
-        ackButton = (Button)findViewById(R.id.ackButton);
+        testImage = (ImageView) findViewById(R.id.testImage);
+        ackButton = (Button) findViewById(R.id.ackButton);
+        retryButton = (Button) findViewById(R.id.retryButton);
+        formula = (TextView)findViewById(R.id.formula);
+        answerText = (TextView)findViewById(R.id.answerText);
     }
 
     private void bindButton() {
         ackButton.setOnClickListener(this);
+        retryButton.setOnClickListener(this);
     }
 
     public void onClick(View v) {
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.ackButton:
-                /*
+                Calculator calculator = new Calculator();
+                String answer = calculator.run(expression);
+                if (answer == null) {
+                    answerText.setText("运算表达式有误，请重新扫描");
+                } else {
+                    answerText.setText(String.valueOf(answer));
+                }
+                break;
+            case R.id.retryButton:
                 Intent intent = new Intent();
-                intent.setClass(CalculateActivity.this, MainActivity.class);
+                intent.setClass(CalculateActivity.this, CameraActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("MODE", this.getIntent().getExtras().getString("MODE"));
+                intent.putExtras(bundle);
                 startActivity(intent);
-                */
                 this.finish();
                 break;
         }
     }
 
-    private void show() {
-        String path = Environment.getExternalStorageDirectory() + "/formula.png";
+    private void bitmapSplit() {
+        String path = Environment.getExternalStorageDirectory() + "/result.png";
         File mFile = new File(path);
 
-        if(mFile.exists()) {
+        if (mFile.exists()) {
             Bitmap bitmap = BitmapFactory.decodeFile(path);
-            BitmapProcessing bitmapProcessing = new BitmapProcessing();
-            Bitmap result = bitmapProcessing.getScanArea(bitmap);
-            testImage.setImageBitmap(result);
-            saveMyBitmap(result);
+
+            BitmapProcess bitmapProcess = new BitmapProcess();
+            boundrects = bitmapProcess.mBoundRect(bitmap);
+            ArrayList<Vector> arrayList = bitmapProcess.allBitmap2Matrix(boundrects);
+            recognition(arrayList);
         }
     }
 
-    private void saveMyBitmap(Bitmap bitmap) {
-        String path = Environment.getExternalStorageDirectory() + "/result.png";
-        File f = new File(path);
-        FileOutputStream fOut = null;
-        try {
-            fOut = new FileOutputStream(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    // 识别
+    public void recognition(ArrayList<Vector> arrayList) {
+        String formulaText = "";
+        for(int i = 0; i < arrayList.size(); i++) {
+            formulaText += data.predict(arrayList.get(i));
         }
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
-        try {
-            fOut.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+        formula.setText(formulaText);
+
+        if(!formulaText.endsWith("=")) {
+            formulaText += "=";
         }
-        try {
-            fOut.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        expression = formulaText;
     }
 }

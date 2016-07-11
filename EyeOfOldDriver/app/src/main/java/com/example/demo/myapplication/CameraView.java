@@ -2,13 +2,19 @@ package com.example.demo.myapplication;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.hardware.Camera;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -17,6 +23,7 @@ import java.util.List;
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback, android.hardware.Camera.PictureCallback {
     private SurfaceHolder holder;
     private Camera camera;
+    private String mode;
 
     public CameraView(Context context, AttributeSet attrs) { // 构造函数
         super(context, attrs);
@@ -69,9 +76,14 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, a
         camera.takePicture(null, null, this);
     }
 
+    public void takePicture(String mode) {
+        takePicture();
+        this.mode = mode;
+    }
+
     public void onPictureTaken(byte[] data, Camera camera) { // 拍摄完成后保存照片
         try {
-            String path = Environment.getExternalStorageDirectory() + "/formula.png";
+            String path = Environment.getExternalStorageDirectory() + "/result.png";
             data2file(data, path);
         } catch(Exception e) {
             e.printStackTrace();
@@ -80,16 +92,67 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, a
     }
 
     private void data2file(byte[] w, String fileName) throws Exception { // 将二进制数据转换成文件
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(fileName);
-            out.write(w);
-            out.close();
-        } catch(Exception e) {
-            if(out != null) {
-                out.close();
-            }
-            throw e;
+        Bitmap bitmap = Byte2Bitmap(w);
+        bitmap = getScanArea(bitmap);
+        saveMyBitmap(bitmap, fileName);
+    }
+
+    public Bitmap Byte2Bitmap(byte[] b) {
+        if (b.length != 0) {
+            return BitmapFactory.decodeByteArray(b, 0, b.length);
+        } else {
+            return null;
         }
+    }
+
+    private void saveMyBitmap(Bitmap bitmap, String fileName) {
+        File f = new File(fileName);
+        FileOutputStream fOut = null;
+        try {
+            fOut = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+        try {
+            fOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 获取取景框中的部分
+    public Bitmap getScanArea(Bitmap bitmap) {
+        Bitmap result = bitmap;
+
+        if (bitmap == null) {
+            return null;
+        }
+        int bmpWidth = bitmap.getWidth();
+        int bmpHeight = bitmap.getHeight();
+
+        int xTopLeft = (int)(0.1 * bmpWidth);
+        int yTopLeft = (int)(0.1 * bmpHeight);
+
+        int width = (int)(0.8 * bmpWidth);
+        int height = 0;
+        if(mode.equals("formula")) {
+            height = (int)(0.2 * bmpHeight);
+        } else if (mode.equals("sudoku")) {
+            height = width;
+        }
+
+        try {
+            result = Bitmap.createBitmap(bitmap, xTopLeft, yTopLeft, width, height);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }

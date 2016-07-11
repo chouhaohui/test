@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
     <ImageView
         android:id="@+id/testImage"
@@ -13,12 +14,28 @@
         android:id="@+id/formula"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="70px"
         />
+
+    <Button
+        android:id="@+id/retryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/retry_button"/>
 
     <Button
         android:id="@+id/ackButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/ack_button"/>
+
+    <TextView
+        android:id="@+id/answerText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="50px"
+        />
 
 </LinearLayout>
