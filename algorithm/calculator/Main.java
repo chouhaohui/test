@@ -1,4 +1,4 @@
-import java.io.IOException;
+//import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -7,6 +7,45 @@ public class Main {
 
     private static boolean isNumeric(String str) {
         return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+    }
+
+    private static boolean validateExpression(String expression) {
+        if (expression.endsWith("=")) {
+            expression = expression.substring(0, expression.length() - 1);
+        }
+        // 去掉算式中所有的合法项替换为"?"字符
+        expression = expression.replaceAll(
+                "\\d", "?");
+        // 去掉替换后算式中所有的空格
+        expression = expression.replaceAll(" ", "");
+        // 如果有两个相邻的项中间没有操作符，则算式不合法
+        if (expression.matches("^??$")) {
+            return false;
+        }
+        // 必须是倒数第二步：判断小括号左右括弧是否等同，括弧位置是否合法,如果括弧全部合法，则去掉所有括弧
+        int num = 0;
+        char[] expChars = expression.toCharArray();
+        for (int i = 0; i < expChars.length; i++) {
+            char temp = expChars[i];
+            if (temp == '(') {
+                num++;
+            } else if (temp == ')') {
+                num--;
+            }
+            if (num < 0) {
+                return false;
+            }
+        }
+        if (num > 0) {
+            return false;
+        }
+        expression = expression.replaceAll("\\(|\\)", "");
+        // 必须是最后一步：判断仅剩的+-*/四则运算算式是否合法
+        if (expression.matches("^\\?*((\\+|-|\\*|\\/)\\?*)*$")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private static int op_order(char op) {
@@ -25,6 +64,9 @@ public class Main {
     }
 
     private static Queue<String> mid_to_post(String expression) {
+        if (!expression.endsWith("=")) {
+            expression += '=';
+        }
         while (!rt.isEmpty()) {
             rt.poll();
         }
@@ -110,8 +152,15 @@ public class Main {
                 String style = "0.####";
                 DecimalFormat df = new DecimalFormat();
                 df.applyPattern(style);
-                double ans = calculate(mid_to_post(expression));
-                System.out.println("The answer is : " + df.format(ans));
+                if (expression.startsWith("+") || expression.startsWith("-")) {
+                    expression = "0" + expression;
+                }
+                if (validateExpression(expression)) {
+                    double ans = calculate(mid_to_post(expression));
+                    System.out.println("The answer is : " + df.format(ans));
+                } else {
+                    System.out.println("Invalid input!");
+                }
             } catch (InputMismatchException s) {
                 System.out.println("Oooops! Exception thrown : " + s);
             }
