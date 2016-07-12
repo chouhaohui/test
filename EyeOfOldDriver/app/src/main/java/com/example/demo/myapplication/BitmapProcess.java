@@ -56,6 +56,7 @@ public class BitmapProcess {
 
     // 获取轮廓的外接矩形
     public ArrayList<Bitmap> mBoundRect(Bitmap bitmap) {
+        bitmap = zoomIn(bitmap); // 将原始图像放大一倍
         ArrayList<MatOfPoint> contours = mFindContours(bitmap);
         ArrayList<Bitmap> boundrects = new ArrayList<>();
 
@@ -284,6 +285,18 @@ public class BitmapProcess {
         Utils.bitmapToMat(bitmap, mat);
         Imgproc.resize(mat, mat, new Size(32, 32));
         Bitmap resizeBitmap = Bitmap.createBitmap(32, 32, bitmap.getConfig());
+        Utils.matToBitmap(mat, resizeBitmap);
+        return resizeBitmap;
+    }
+
+    // Bitmap放大
+    private Bitmap zoomIn(Bitmap bitmap) {
+        int width = bitmap.getWidth() * 2;
+        int height = bitmap.getHeight() * 2;
+        Mat mat = new Mat();
+        Utils.bitmapToMat(bitmap, mat);
+        Imgproc.resize(mat, mat, new Size(width, height));
+        Bitmap resizeBitmap = Bitmap.createBitmap(width, height, bitmap.getConfig());
         Utils.matToBitmap(mat, resizeBitmap);
         return resizeBitmap;
     }

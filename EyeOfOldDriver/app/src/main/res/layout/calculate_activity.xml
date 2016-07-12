@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     android:background="#FFFFFF">
 
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:id="@+id/rectangleLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin">
 
         <TextView
             android:id="@+id/answerText"
@@ -34,24 +35,55 @@
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/retryButton"
+    <LinearLayout
+        android:layout_below="@id/rectangleLayout"
         android:layout_width="match_parent"
-        android:layout_height="100px"
-        android:textColor="#fff"
-        android:background="#ff2000"
-        android:textSize="40px"
-        android:layout_marginTop="20dp"
-        android:text="@string/retry_button"/>
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/ackButton"
+        <Button
+            android:id="@+id/retryButton"
+            android:layout_width="match_parent"
+            android:layout_height="100px"
+            android:textColor="#fff"
+            android:background="#ff2000"
+            android:textSize="40px"
+            android:layout_marginTop="20dp"
+            android:text="@string/retry_button"/>
+
+        <Button
+            android:id="@+id/ackButton"
+            android:layout_width="match_parent"
+            android:layout_height="100px"
+            android:textColor="#fff"
+            android:background="#66bb6a"
+            android:textSize="40px"
+            android:layout_marginTop="20dp"
+            android:text="@string/ack_button"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/waitLayout"
         android:layout_width="match_parent"
-        android:layout_height="100px"
-        android:textColor="#fff"
-        android:background="#66bb6a"
-        android:textSize="40px"
-        android:layout_marginTop="20dp"
-        android:text="@string/ack_button"/>
+        android:layout_height="match_parent"
+        android:background="#fff"
+        android:alpha="0.8"
+        android:orientation="horizontal"/>
 
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/waitbar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/dialog"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        />
+
+
+</RelativeLayout>
