@@ -75,7 +75,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         layoutParams.height = cameraHeight;
         cameraSurfaceView.setLayoutParams(layoutParams);
 
-        if(bundle.getString("MODE").equals("formula")) { // 当前界面是四则运算界面
+        if(bundle.getString("MODE").equals("formula") || bundle.getString("MODE").equals("equation")) { // 当前界面是四则运算界面或解方程界面
             //if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) { // 当屏幕是竖屏的时候
             int rectangleWidth = (int)(0.8 * cameraWidth);
             int rectangleHeight = (int)(0.2 * cameraHeight);
@@ -110,9 +110,15 @@ public class CameraActivity extends Activity implements View.OnClickListener {
                     e.printStackTrace();
                 }
                 Intent intent = new Intent();
-                intent.setClass(CameraActivity.this, CalculateActivity.class);
-
                 Bundle bundle = this.getIntent().getExtras();
+                if(bundle.getString("MODE").equals("equation")) {
+                    intent.setClass(CameraActivity.this, EquationActivity.class);
+                } else {
+                    intent.setClass(CameraActivity.this, CalculateActivity.class);
+                }
+
+
+
                 intent.putExtras(bundle);
 
                 startActivity(intent);

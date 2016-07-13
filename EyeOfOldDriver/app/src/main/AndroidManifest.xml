@@ -35,6 +35,11 @@
             android:label="@string/calculate"
             android:theme="@android:style/Theme.NoTitleBar">
         </activity>
+        <activity
+            android:name=".EquationActivity"
+            android:label="@string/calculate"
+            android:theme="@android:style/Theme.NoTitleBar">
+        </activity>
     </application>
 
 </manifest>

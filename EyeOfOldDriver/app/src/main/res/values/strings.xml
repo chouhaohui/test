@@ -5,7 +5,10 @@
 
     <string name="formula">四则运算</string>
     <string name="su_do_ku">数独</string>
+    <string name="equation">方程组</string>
     <string name="retry_button">重新扫描</string>
     <string name="ack_button">计算结果</string>
+    <string name="add_button">添加方程</string>
     <string name="calculate">计算</string>
+    <string name="retake_button">重拍</string>
 </resources>

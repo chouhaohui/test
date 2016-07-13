@@ -27,6 +27,7 @@ import rb.popview.PopField;
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private Button formulaButton;
+    private Button equationButton;
     private Button sudokuButton;
     private Data data;
 
@@ -68,11 +69,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void findView() {
         formulaButton = (Button)findViewById(R.id.formulaButton);
+        equationButton = (Button)findViewById(R.id.equationButton);
         sudokuButton = (Button)findViewById(R.id.sudokuButton);
     }
 
     private void bindButton() {
         formulaButton.setOnClickListener(this);
+        equationButton.setOnClickListener(this);
         sudokuButton.setOnClickListener(this);
         mPopField = PopField.attach2Window(this);
     }
@@ -97,8 +100,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.formulaButton:
                 bundle.putString("MODE", "formula");
                 break;
+            case R.id.equationButton:
+                bundle.putString("MODE", "equation");
+                break;
             case R.id.sudokuButton:
                 bundle.putString("MODE", "sudoku");
+                break;
         }
         intent.putExtras(bundle);
 
