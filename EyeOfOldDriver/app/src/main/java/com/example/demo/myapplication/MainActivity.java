@@ -78,6 +78,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     public void onClick(View v) {
+        Button button = (Button)findViewById(v.getId());
+        /*
         // 保存原Button信息
         Button button = (Button)findViewById(v.getId());
         String text = button.getText().toString();
@@ -86,6 +88,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Drawable background = button.getBackground();
         float textSize = button.getTextSize();
         System.out.println(textSize);
+        */
 
         final Intent intent = new Intent();
         intent.setClass(MainActivity.this, CameraActivity.class);
@@ -99,6 +102,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
         intent.putExtras(bundle);
 
+        /*
         // 消失的Button还原
         LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -110,12 +114,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         new_btn.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
         new_btn.setBackground(background);
         new_btn.setOnClickListener(this);
-
         mPopField.popView(button, new_btn, true);
+        */
+        mPopField.popView(button);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 startActivity(intent);
+                MainActivity.this.finish();
             }
         }, 500);
     }

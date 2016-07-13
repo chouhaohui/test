@@ -54,6 +54,8 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     private PopField mPopField;
     private ProgressBar progressBar;
 
+    private String expression;
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -140,6 +142,13 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ackButton:
+                Calculator calculator = new Calculator();
+                String answer = calculator.process_cal(expression);
+                if (answer == null) {
+                    answerText.setText("运算表达式有误，请重新扫描");
+                } else {
+                    answerText.setText(String.valueOf(answer));
+                }
                 mPopField.popView(formula);
                 break;
             case R.id.retryButton:
@@ -180,12 +189,6 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
             formulaText += "=";
         }
 
-        Calculator calculator = new Calculator();
-        String answer = calculator.run(formulaText);
-        if (answer == null) {
-            answerText.setText("运算表达式有误，请重新扫描");
-        } else {
-            answerText.setText(String.valueOf(answer));
-        }
+        expression = formulaText;
     }
 }
