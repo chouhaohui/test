@@ -1,14 +1,22 @@
 package com.example.demo.myapplication;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,7 +78,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     public void onClick(View v) {
-        mPopField.popView(findViewById(v.getId()));
+        Button button = (Button)findViewById(v.getId());
+        /*
+        // 保存原Button信息
+        Button button = (Button)findViewById(v.getId());
+        String text = button.getText().toString();
+        ViewGroup.LayoutParams layoutParams = button.getLayoutParams();
+        ColorStateList textColor = button.getTextColors();
+        Drawable background = button.getBackground();
+        float textSize = button.getTextSize();
+        System.out.println(textSize);
+        */
+
         final Intent intent = new Intent();
         intent.setClass(MainActivity.this, CameraActivity.class);
         Bundle bundle = new Bundle();
@@ -82,10 +101,27 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 bundle.putString("MODE", "sudoku");
         }
         intent.putExtras(bundle);
+
+        /*
+        // 消失的Button还原
+        LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        Button new_btn = new Button(this);
+        new_btn.setText(text);
+        new_btn.setId(v.getId());
+        new_btn.setLayoutParams(layoutParams);
+        new_btn.setTextColor(textColor);
+        new_btn.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+        new_btn.setBackground(background);
+        new_btn.setOnClickListener(this);
+        mPopField.popView(button, new_btn, true);
+        */
+        mPopField.popView(button);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 startActivity(intent);
+                MainActivity.this.finish();
             }
         }, 500);
     }

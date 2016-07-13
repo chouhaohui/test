@@ -5,7 +5,7 @@ import java.io.*;
 
 public class KNN {
     // 所有可能的字符
-    private char all_chars[]  = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '*', '/', '/', '(', ')'};
+    private char all_chars[]  = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '*', '/', '/', '(', ')', '.'};
     private Vector<Vector> dataset;                       // 储存训练集
     private Vector<Integer> class_names;                  // 储存训练集对应的label
     private int k = 3;                                    // 算法参数
@@ -74,8 +74,8 @@ public class KNN {
     	Comparator my_cmp = new cmp();
     	Collections.sort(distances, my_cmp);
     	
-    	int probable_class_names[] = new int[18];
-    	for (int i = 0; i < 18; i++)
+    	int probable_class_names[] = new int[19];
+    	for (int i = 0; i < 19; i++)
     		probable_class_names[i] = 0;
     	
     	int a_class_name;
@@ -86,7 +86,7 @@ public class KNN {
     		probable_class_names[a_class_name]++;
     	}
 
-    	for (int i = 0; i < 18; i++) {
+    	for (int i = 0; i < 19; i++) {
     		if (probable_class_names[i] > max) {
     			max = probable_class_names[i];
     			result = i;

@@ -8,12 +8,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -42,12 +45,16 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     private Button retryButton;
     private TextView formula;
     private TextView answerText;
+    private LinearLayout waitLayout;
 
     private ArrayList<Bitmap> boundrects;
 
     private Data data;
 
     private PopField mPopField;
+    private ProgressBar progressBar;
+
+    private String expression;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -55,7 +62,14 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS: {
                     Log.i(TAG, "OpenCV loaded successfully");
-                    bitmapSplit();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            bitmapSplit();
+                            progressBar.setVisibility(View.INVISIBLE);
+                            waitLayout.setVisibility(View.INVISIBLE);
+                        }
+                    }, 500);
                 }
                 break;
                 default: {
@@ -116,6 +130,8 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
         formula = (TextView)findViewById(R.id.formula);
         answerText = (TextView)findViewById(R.id.answerText);
         mPopField = PopField.attach2Window(this);
+        progressBar = (ProgressBar)findViewById(R.id.waitbar);
+        waitLayout = (LinearLayout)findViewById(R.id.waitLayout);
     }
 
     private void bindButton() {
@@ -126,6 +142,13 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ackButton:
+                Calculator calculator = new Calculator();
+                String answer = calculator.process_cal(expression);
+                if (answer == null) {
+                    answerText.setText("运算表达式有误，请重新扫描");
+                } else {
+                    answerText.setText(String.valueOf(answer));
+                }
                 mPopField.popView(formula);
                 break;
             case R.id.retryButton:
@@ -166,12 +189,6 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
             formulaText += "=";
         }
 
-        Calculator calculator = new Calculator();
-        String answer = calculator.run(formulaText);
-        if (answer == null) {
-            answerText.setText("运算表达式有误，请重新扫描");
-        } else {
-            answerText.setText(String.valueOf(answer));
-        }
+        expression = formulaText;
     }
 }
