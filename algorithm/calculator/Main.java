@@ -170,6 +170,61 @@ public class Main {
         }
     }
 
+    private static double[] get_coe(String str) {
+        double[] ans;
+        ans = new double[3];
+        String[] ss = str.split("\\+|-|\\*|/|\\(|\\)|=");
+        for (String s:ss) {
+            if (s.equals("")) {
+                continue;
+            }
+            if (isNumeric(s)) {
+                ans[2] = Double.parseDouble(s);
+            } else if (s.indexOf("x") != -1) {
+                if (s.indexOf("x") == 0) {
+                    ans[0] = 1;
+                } else {
+                    ans[0] = Double.parseDouble(s.substring(0, s.length() - 1));
+                }
+            } else {
+                if (s.indexOf("y") == 0) {
+                    ans[1] = 1;
+                } else {
+                    ans[1] = Double.parseDouble(s.substring(0, s.length() - 1));
+                }
+            }
+        }
+        return ans;
+    }
+
+    // 只需要把包含方程的字符串数组传入即可得到一个解的数组，x = ans[0], y = ans[1]
+    // 例如：
+    //  String[] s----> s[0] = "4.5x+6y=2"     s[1] = "x+y=3".
+    //  调用solution(s） 即可得到一个关于解的数组
+    private static double[] solution(String[] functions) throws InputMismatchException {
+        double a, b, c, d, e, f;
+        double[] t = get_coe(functions[0]);
+        a = t[0];
+        b = t[1];
+        e = t[2];
+        double[] tt = get_coe(functions[1]);
+        c = tt[0];
+        d = tt[1];
+        f = tt[2];
+
+        double temp = a * d - b * c;
+        Double TEMP = temp;
+        if (TEMP.equals(0)) {
+            throw new InputMismatchException("This equation set has no solution");
+
+        }
+        double[] ans;
+        ans = new double[2];
+        ans[0] = (d * e - b * f) / temp;
+        ans[1] = (a * f - c * e) / temp;
+        return ans;
+    }
+
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         System.out.println("Please input an expression such as (3+4)*5=\n");
@@ -178,6 +233,5 @@ public class Main {
             expression = in.nextLine();
             process_cal(expression);
         }
-
     }
 }
