@@ -16,19 +16,26 @@
     <Button
         android:id="@+id/formulaButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100px"
         android:layout_marginTop="20pt"
         android:layout_below="@id/eyeImage"
+        android:textColor="#fff"
+        android:background="#66bb6a"
+        android:textSize="40px"
         android:layout_centerHorizontal="true"
         android:text="@string/formula"/>
 
     <Button
         android:id="@+id/sudokuButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100px"
         android:layout_below="@id/formulaButton"
         android:layout_marginTop="10pt"
+        android:textColor="#fff"
+        android:background="#66bb6a"
+        android:textSize="40px"
         android:layout_centerHorizontal="true"
-        android:text="@string/su_do_ku"/>
+        android:text="@string/su_do_ku"
+        android:visibility="invisible"/>
 
 </RelativeLayout>
