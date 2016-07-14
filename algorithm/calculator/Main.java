@@ -186,11 +186,17 @@ public class Main {
                 } else {
                     ans[0] = Double.parseDouble(s.substring(0, s.length() - 1));
                 }
+                if (str.indexOf(s) > 0 && str.charAt(str.indexOf(s)-1) == '-') {
+                    ans[0] = -ans[0];
+                }
             } else {
                 if (s.indexOf("y") == 0) {
                     ans[1] = 1;
                 } else {
                     ans[1] = Double.parseDouble(s.substring(0, s.length() - 1));
+                }
+                if (str.indexOf(s) > 0 && str.charAt(str.indexOf(s)-1) == '-') {
+                    ans[1] = -ans[1];
                 }
             }
         }
@@ -222,16 +228,31 @@ public class Main {
         ans = new double[2];
         ans[0] = (d * e - b * f) / temp;
         ans[1] = (a * f - c * e) / temp;
+        for (int i = 0; i < 2; ++i) {
+            if (ans[i] == -0.0) {
+                ans[i] = 0.0;
+            }
+        }
         return ans;
     }
 
     public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-        System.out.println("Please input an expression such as (3+4)*5=\n");
-        String expression;
-        while (true) {
-            expression = in.nextLine();
-            process_cal(expression);
-        }
+//        Scanner in = new Scanner(System.in);
+//        System.out.println("Please input an expression such as (3+4)*5=\n");
+//        String expression;
+//        while (true) {
+//            expression = in.nextLine();
+//            process_cal(expression);
+//        }
+        String[] s;
+        s = new String[2];
+        s[0] = "x-2y=3";
+        s[1] = "-2x+y=4";
+        double[] ans;
+        ans = new double[2];
+        ans = solution(s);
+        System.out.println(ans[0]);
+        System.out.println(ans[1]);
+
     }
 }
