@@ -20,6 +20,9 @@ public class EquationCalcaulator {
             }
             if (isNumeric(s)) {
                 ans[2] = Double.parseDouble(s);
+                if (str.indexOf(s) < str.indexOf('=')) {
+                    ans[2] = -ans[2];
+                }
             } else if (s.indexOf("x") != -1) {
                 if (s.indexOf("x") == 0) {
                     ans[0] = 1;
@@ -29,6 +32,9 @@ public class EquationCalcaulator {
                 if (str.indexOf(s) > 0 && str.charAt(str.indexOf(s)-1) == '-') {
                     ans[0] = -ans[0];
                 }
+                if (str.indexOf(s) > str.indexOf('=')) {
+                    ans[0] = -ans[0];
+                }
             } else {
                 if (s.indexOf("y") == 0) {
                     ans[1] = 1;
@@ -36,6 +42,9 @@ public class EquationCalcaulator {
                     ans[1] = Double.parseDouble(s.substring(0, s.length() - 1));
                 }
                 if (str.indexOf(s) > 0 && str.charAt(str.indexOf(s)-1) == '-') {
+                    ans[1] = -ans[1];
+                }
+                if (str.indexOf(s) > str.indexOf('=')) {
                     ans[1] = -ans[1];
                 }
             }

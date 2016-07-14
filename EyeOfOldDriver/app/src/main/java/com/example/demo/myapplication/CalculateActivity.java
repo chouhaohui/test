@@ -43,6 +43,7 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     private String TAG = "CalculateActivity";
     private Button ackButton;
     private Button retryButton;
+    private Button returnButton;
     private TextView formula;
     private TextView answerText;
     private LinearLayout waitLayout;
@@ -132,11 +133,13 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
         mPopField = PopField.attach2Window(this);
         progressBar = (ProgressBar)findViewById(R.id.waitbar);
         waitLayout = (LinearLayout)findViewById(R.id.waitLayout);
+        returnButton = (Button)findViewById(R.id.returnButton);
     }
 
     private void bindButton() {
         ackButton.setOnClickListener(this);
         retryButton.setOnClickListener(this);
+        returnButton.setOnClickListener(this);
     }
 
     public void onClick(View v) {
@@ -158,6 +161,12 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
                 bundle.putString("MODE", this.getIntent().getExtras().getString("MODE"));
                 intent.putExtras(bundle);
                 startActivity(intent);
+                this.finish();
+                break;
+            case R.id.returnButton:
+                Intent intent1 = new Intent();
+                intent1.setClass(CalculateActivity.this, MainActivity.class);
+                startActivity(intent1);
                 this.finish();
                 break;
         }

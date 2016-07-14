@@ -37,6 +37,7 @@ public class EquationActivity extends Activity implements View.OnClickListener, 
     private Button addButton;
     private Button ackButton;
     private Button retryButton;
+    private Button returnButton;
     private TextView ansText;
     private ArrayList<Bitmap> boundrects;
     private List<String> equationList;
@@ -128,6 +129,7 @@ public class EquationActivity extends Activity implements View.OnClickListener, 
         ackButton = (Button)findViewById(R.id.ackButton);
         addButton = (Button)findViewById(R.id.addButton);
         retryButton = (Button)findViewById(R.id.retryButton);
+        returnButton = (Button)findViewById(R.id.returnButton);
         progressBar = (ProgressBar)findViewById(R.id.waitbar);
         waitLayout = (LinearLayout)findViewById(R.id.waitLayout);
         mList = (ListView)findViewById(R.id.equationList);
@@ -138,6 +140,7 @@ public class EquationActivity extends Activity implements View.OnClickListener, 
         ackButton.setOnClickListener(this);
         addButton.setOnClickListener(this);
         retryButton.setOnClickListener(this);
+        returnButton.setOnClickListener(this);
     }
 
     public void onClick(View v) {
@@ -179,6 +182,12 @@ public class EquationActivity extends Activity implements View.OnClickListener, 
                 intent1.setClass(EquationActivity.this, CameraActivity.class);
                 intent1.putExtras(bundle1);
                 startActivity(intent1);
+                this.finish();
+                break;
+            case R.id.returnButton:
+                Intent intent2 = new Intent();
+                intent2.setClass(EquationActivity.this, MainActivity.class);
+                startActivity(intent2);
                 this.finish();
                 break;
         }
