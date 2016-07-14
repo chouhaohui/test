@@ -141,7 +141,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, a
 
         int width = (int)(0.8 * bmpWidth);
         int height = 0;
-        if(mode.equals("formula")) {
+        if(mode.equals("formula") || mode.equals("equation")) {
             height = (int)(0.2 * bmpHeight);
         } else if (mode.equals("sudoku")) {
             height = width;

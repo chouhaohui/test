@@ -55,6 +55,15 @@
             android:layout_marginTop="20dp"
             android:text="@string/retry_button"/>
 
+        <TextView
+            android:id="@+id/ans"
+            android:layout_width="match_parent"
+            android:layout_height="100px"
+            android:textColor="#000"
+            android:textSize="50px"
+            android:gravity="center"
+            android:layout_marginTop="20dp" />
+
     </LinearLayout>
 
     <LinearLayout

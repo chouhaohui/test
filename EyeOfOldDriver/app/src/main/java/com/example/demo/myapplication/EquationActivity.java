@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,12 +15,14 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -27,17 +30,19 @@ import java.util.Vector;
 /**
  * Created by HeWenjie on 2016/7/13.
  */
-public class EquationActivity extends Activity implements View.OnClickListener {
+public class EquationActivity extends Activity implements View.OnClickListener, EquationAdapter.Callback {
     private ProgressBar progressBar;
     private LinearLayout waitLayout;
     private Data data;
     private Button addButton;
     private Button ackButton;
     private Button retryButton;
+    private TextView ansText;
     private ArrayList<Bitmap> boundrects;
     private List<String> equationList;
     private ListView mList;
     private EquationAdapter equationAdapter;
+    private boolean flag = false;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -66,7 +71,6 @@ public class EquationActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.equation_activity);
-
         data = (Data)getApplication();
         findView();
         bindButton();
@@ -79,7 +83,9 @@ public class EquationActivity extends Activity implements View.OnClickListener {
         if (!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
         } else {
-            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            if(!flag) {
+                mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            }
         }
     }
 
@@ -114,7 +120,7 @@ public class EquationActivity extends Activity implements View.OnClickListener {
                 equationList.add(mString[i]);
             }
         }
-        equationAdapter = new EquationAdapter(this, R.layout.list_item, equationList);
+        equationAdapter = new EquationAdapter(this, equationList, this);
         mList.setAdapter(equationAdapter);
     }
 
@@ -125,6 +131,7 @@ public class EquationActivity extends Activity implements View.OnClickListener {
         progressBar = (ProgressBar)findViewById(R.id.waitbar);
         waitLayout = (LinearLayout)findViewById(R.id.waitLayout);
         mList = (ListView)findViewById(R.id.equationList);
+        ansText = (TextView)findViewById(R.id.ans);
     }
 
     private void bindButton() {
@@ -134,9 +141,22 @@ public class EquationActivity extends Activity implements View.OnClickListener {
     }
 
     public void onClick(View v) {
+        DecimalFormat df = new DecimalFormat();
         switch (v.getId()) {
             case R.id.ackButton:
-
+                EquationCalcaulator equationCalcaulator = new EquationCalcaulator();
+                String[] equationStrings = new String[equationList.size()];
+                for(int i = 0; i < equationList.size(); i++) {
+                    equationStrings[i] = equationList.get(i);
+                }
+                double[] ans = equationCalcaulator.solution(equationStrings);
+                String ansString = "";
+                if (ans == null) {
+                    ansString = "方程组无唯一解";
+                } else {
+                    ansString = "x = " + df.format(ans[0]) + ", y = " + df.format(ans[1]);
+                }
+                ansText.setText(ansString);
                 break;
             case R.id.retryButton:
                 Intent intent = new Intent();
@@ -165,6 +185,7 @@ public class EquationActivity extends Activity implements View.OnClickListener {
     }
 
     private void bitmapSplit() {
+        flag = true;
         String path = Environment.getExternalStorageDirectory() + "/result.png";
         File mFile = new File(path);
 
@@ -216,5 +237,11 @@ public class EquationActivity extends Activity implements View.OnClickListener {
             }
         }
         return String.copyValueOf(equation);
+    }
+
+    public void click(View v) {
+        int position = (Integer)v.getTag();
+        equationList.remove(position);
+        equationAdapter.notifyDataSetChanged();
     }
 }

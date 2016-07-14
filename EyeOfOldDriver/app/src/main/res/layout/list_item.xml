@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants">
 
     <TextView
@@ -12,15 +12,12 @@
         android:textColor="#000"
         android:gravity="center"/>
 
-    <Button
-        android:id="@+id/retakeButton"
+    <ImageButton
+        android:id="@+id/deleteButton"
+        android:layout_width="60px"
+        android:layout_height="60px"
         android:layout_alignParentRight="true"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="@string/retake_button"
-        android:textColor="#fff"
-        android:background="#66bb6a"
-        android:textSize="40px"
-        />
+        android:background="@drawable/redcross"
+        android:layout_centerVertical="true"/>
 
 </RelativeLayout>
