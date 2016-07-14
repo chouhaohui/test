@@ -220,7 +220,7 @@ public class Main {
 
         double temp = a * d - b * c;
         Double TEMP = temp;
-        if (TEMP.equals(0)) {
+        if (TEMP.equals(0.0)) {
             throw new InputMismatchException("This equation set has no solution");
 
         }
@@ -246,8 +246,10 @@ public class Main {
 //        }
         String[] s;
         s = new String[2];
-        s[0] = "x-2y=3";
-        s[1] = "-2x+y=4";
+//        s[0] = "x-2y=3";
+//        s[1] = "-2x+y=4";
+        s[0] = "x+y=1";
+        s[1] = "x+y=2";
         double[] ans;
         ans = new double[2];
         ans = solution(s);
