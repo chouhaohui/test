@@ -189,6 +189,11 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     // 识别
     public void recognition(ArrayList<Vector> arrayList) {
         String formulaText = "";
+        if(arrayList.size() == 0) {
+            formula.setText("没有表达式，请重新扫描");
+            expression = "";
+            return;
+        }
         for(int i = 0; i < arrayList.size(); i++) {
             formulaText += data.predict(arrayList.get(i));
         }

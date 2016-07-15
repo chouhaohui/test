@@ -211,6 +211,10 @@ public class EquationActivity extends Activity implements View.OnClickListener, 
     // 识别
     public void recognition(ArrayList<Vector> arrayList) {
         String formulaText = "";
+        if(arrayList.size() == 0) {
+            ansText.setText("没有方程式，请重新扫描");
+            return;
+        }
         for(int i = 0; i < arrayList.size(); i++) {
             formulaText += data.predict(arrayList.get(i));
         }
@@ -223,6 +227,7 @@ public class EquationActivity extends Activity implements View.OnClickListener, 
 
     // 找到expression中的等号
     private String findEqualsign(String expression) {
+        if(expression.length() < 1) return null;
         char[] equation = new char[expression.length() - 1];
         int iter = 0;
         boolean flag = false; // 减号的标记
