@@ -227,8 +227,7 @@ public class EquationActivity extends Activity implements View.OnClickListener, 
 
     // 找到expression中的等号
     private String findEqualsign(String expression) {
-        if(expression.length() < 1) return null;
-        char[] equation = new char[expression.length() - 1];
+        char[] equation = new char[expression.length()];
         int iter = 0;
         boolean flag = false; // 减号的标记
         for(int i = 0; i < expression.length(); i++) {
@@ -250,7 +249,14 @@ public class EquationActivity extends Activity implements View.OnClickListener, 
                 iter++;
             }
         }
-        return String.copyValueOf(equation);
+        char[] new_equation = equation;
+        if(iter < expression.length()) {
+            new_equation = new char[expression.length() - 1];
+            for(int i = 0; i < new_equation.length; i++) {
+                new_equation[i] = equation[i];
+            }
+        }
+        return String.copyValueOf(new_equation);
     }
 
     public void click(View v) {
